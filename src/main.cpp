@@ -17,7 +17,7 @@ SSEClient clients[10];
 
 volatile uint8_t clientCount = 0;
 
-void displayClientCount(void) {
+void IRAM_ATTR displayClientCount(void) {
     static uint8_t prevCount = 255;
 
     if (prevCount == clientCount)
@@ -133,9 +133,9 @@ void setup() {
 
     server.begin();
 
-    //timer1_attachInterrupt(displayClientCount);
-    //timer1_write(31250);
-    //timer1_enable(2, 0, 1);
+    timer1_attachInterrupt(displayClientCount);
+    timer1_write(31250);
+    timer1_enable(2, 0, 1);
 }
 
 
@@ -166,11 +166,11 @@ void loop() {
 
         slot.client->write(msgBuf);
     }
-
-    digitalWrite(LED_BUILTIN, HIGH);
     delay(1000);
 
+    digitalWrite(LED_BUILTIN, HIGH);
+
     handleClient();
-    displayClientCount();
+    //displayClientCount();
     yield();
 }
