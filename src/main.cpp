@@ -20,8 +20,13 @@ WiFiServer server(80);
 SSEClient clients[10];
 
 volatile uint8_t clientCount = 0;
+volatile bool displayUpdate = true;
 
-void IRAM_ATTR displayClientCount(void) {
+void IRAM_ATTR timeToUpdate(void) {
+    displayUpdate = true;
+}
+
+void displayClientCount(void) {
     static uint8_t prevCount = 255;
 
     if (prevCount == clientCount)
@@ -143,8 +148,8 @@ void setup() {
 
     server.begin();
 
-    timer1_attachInterrupt(displayClientCount);
-    timer1_write(31250);
+    timer1_attachInterrupt(timeToUpdate);
+    timer1_write(312500);
     timer1_enable(2, 0, 1);
 }
 
@@ -180,7 +185,11 @@ void loop() {
     delay(MSG_DELAY);
     digitalWrite(LED_BUILTIN, HIGH);
 
+    if (displayUpdate) {
+        displayClientCount();
+        displayUpdate = false;
+    }
+
     handleClient();
-    //displayClientCount();
     yield();
 }
