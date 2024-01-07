@@ -9,6 +9,7 @@
 
 #define DEBUG
 #define UI_DEBUG_SERVER_PORT 8080
+#define MSG_DELAY 300
 
 struct SSEClient {
     uint32_t msgCount;
@@ -175,8 +176,8 @@ void loop() {
 
         slot.client->write(msgBuf);
     }
-    delay(1000);
 
+    delay(MSG_DELAY);
     digitalWrite(LED_BUILTIN, HIGH);
 
     handleClient();
