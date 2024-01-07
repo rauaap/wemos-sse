@@ -16,7 +16,6 @@ struct SSEClient {
 };
 
 WiFiServer server(80);
-//std::unique_ptr<WiFiClient> clients[10];
 SSEClient clients[10];
 
 volatile uint8_t clientCount = 0;
