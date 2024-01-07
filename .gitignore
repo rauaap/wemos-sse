@@ -1,0 +1,4 @@
+.gitignore
+.pio
+web/**
+include/html.h
