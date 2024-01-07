@@ -4,7 +4,11 @@
 #include "html.h"
 #include "parsing.h"
 
+#define STRINGIFY(n) _STRINGIFY(n)
+#define _STRINGIFY(n) #n
+
 #define DEBUG
+#define UI_DEBUG_SERVER_PORT 8080
 
 struct SSEClient {
     uint32_t msgCount;
@@ -100,7 +104,13 @@ void handleSubscription(std::unique_ptr<WiFiClient> client) {
     for (auto& slot: clients) {
         if (slot.client == nullptr) {
             slot = {0, std::move(client)};
-            slot.client->write("HTTP/1.1 200 OK\nCache-Control: no-store\nContent-Type: text/event-stream\n\n");
+
+            #ifdef DEBUG
+                slot.client->write("HTTP/1.1 200 OK\nCache-Control: no-store\nContent-Type: text/event-stream\nAccess-Control-Allow-Origin: http://127.0.0.1:" STRINGIFY(UI_DEBUG_SERVER_PORT) "\n\n");
+            #else
+                slot.client->write("HTTP/1.1 200 OK\nCache-Control: no-store\nContent-Type: text/event-stream\n\n");
+            #endif
+
             clientCount++;
             break;
         }
